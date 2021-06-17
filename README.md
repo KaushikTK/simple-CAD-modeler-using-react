@@ -1,4 +1,4 @@
-This is a simple CAD modeler example using react and react-three-fiber. With this, user can create boxes and spheres of required dimension and also position them in the 3D space by specifying their coordinates by interacting with a simple UI. Orbit controls are also added to the canvas. 
+This is a simple CAD modeler example using react and react-three-fiber. With this, user can create boxes, spheres and cylinders of required dimension and also position them in the 3D space by specifying their coordinates by interacting with a simple UI. Orbit controls are also added to the canvas. 
 
 To start, run the following commands in the command prompt:
 * `npm install`
