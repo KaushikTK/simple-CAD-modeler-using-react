@@ -7,6 +7,10 @@ extend({OrbitControls})
 
 const CameraControls = () => {
   const {    camera,    gl: { domElement } } = useThree();
+  camera.position.x = 0
+  camera.position.y = 0
+  camera.position.z = 20
+
   const controls = useRef();
   useFrame((state) => controls.current.update());
   return <orbitControls ref={controls} args={[camera, domElement]} enableZoom={true} />;
@@ -20,7 +24,7 @@ export default function App() {
 
   const [canvasSize, _] = useState({
     width:parseInt(window.screen.width)-50,
-    height:parseInt(0.75 * window.screen.height)
+    height:parseInt(0.7 * window.screen.height)
   })
 
   return (

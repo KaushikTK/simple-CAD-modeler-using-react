@@ -14,7 +14,7 @@ const NavBar = props=>{
     const c = -1;
 
     const makeAllClickedFalse = ()=>{
-        return new Promise((res, rej)=>{
+        return new Promise((res)=>{
             setBoxClicked(false);
             setSphereClicked(false);
             setCylinderClicked(false);
@@ -134,7 +134,7 @@ const NavBar = props=>{
         objectNumber += 1
 
         makeAllClickedFalse().then((res)=>{
-            setCylinderParams({topRadius:1,bottomRadius:1,height:1,radialSegments:32})
+            setCylinderParams({topRadius:1,bottomRadius:1,height:1,radialSegments:32,x:1,y:1,z:1})
         })
 
     }
@@ -182,7 +182,7 @@ const NavBar = props=>{
 
     return(
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light shadow">
+            <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom border-primary">
             <p className='display-4 pr-4 my-auto' style={{fontSize:'1.5rem'}}>KAUSHIK'S CAD</p>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
@@ -191,11 +191,11 @@ const NavBar = props=>{
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div className="navbar-nav">
                 
-                <button className="btn-sm btn-dark mr-1 mb-1" onClick={e=>{setBoxClicked(!boxClicked); if(sphereClicked) setSphereClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null);}}>Box</button>
+                <button className="btn-sm btn-dark mr-1 mb-1" style={{boxShadow:`none`}} onClick={e=>{setBoxClicked(!boxClicked); if(sphereClicked) setSphereClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null);}}>Box</button>
                 
-                <button className="btn-sm btn-dark mr-1 mb-1" onClick={e=>{ setSphereClicked(!sphereClicked); if(boxClicked) setBoxClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null); }}>Sphere</button>
+                <button className="btn-sm btn-dark mr-1 mb-1" style={{boxShadow:`none`}} onClick={e=>{ setSphereClicked(!sphereClicked); if(boxClicked) setBoxClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null); }}>Sphere</button>
 
-                <button className="btn-sm btn-dark mr-1 mb-1 mr-3" onClick={e=>{ setCylinderClicked(!cylinderClicked); if(boxClicked) setBoxClicked(false); if(sphereClicked) setSphereClicked(false); setSelectedObject(null); }}>Cylinder</button>
+                <button className="btn-sm btn-dark mr-1 mb-1 mr-3" style={{boxShadow:`none`}} onClick={e=>{ setCylinderClicked(!cylinderClicked); if(boxClicked) setBoxClicked(false); if(sphereClicked) setSphereClicked(false); setSelectedObject(null); }}>Cylinder</button>
 
                 </div>
 
@@ -205,35 +205,35 @@ const NavBar = props=>{
                     
                     <div className="card-sm">
 					<label htmlFor="length">Length</label>
-                    <input type="number" id='length' value={boxParams.length} onChange={e=>{setBoxParams({...boxParams,length:parseFloat(e.target.value)})}} className='form-control form-control-sm'/>
+                    <input type="number" id='length' value={boxParams.length} min={parseFloat(1)} onChange={e=>{setBoxParams({...boxParams,length:parseFloat(e.target.value)})}} className='form-control form-control-sm'/>
                     </div>
 
                     <div className='card-sm'>
 					<label htmlFor="breadth">Breadth</label>
-                    <input type="number" id='breadth' value={boxParams.breadth} onChange={e=>{setBoxParams({...boxParams,breadth:parseFloat(e.target.value)})}} className='form-control form-control-sm'/>
+                    <input type="number" id='breadth' value={boxParams.breadth} min={parseFloat(1)} onChange={e=>{setBoxParams({...boxParams,breadth:parseFloat(e.target.value)})}} className='form-control form-control-sm'/>
 					</div>
 
                     <div className='card-sm'>
-					<label htmlFor="height">Height</label>                    
-                    <input type="number" id='height' value={boxParams.height} className='form-control form-control-sm' onChange={e=>{setBoxParams({...boxParams,height:parseFloat(e.target.value)})}}/>
+					<label htmlFor="height">Height</label>
+                    <input type="number" id='height' value={boxParams.height} min={parseFloat(1)} className='form-control form-control-sm' onChange={e=>{setBoxParams({...boxParams,height:parseFloat(e.target.value)})}}/>
 					</div>
 
                     <div className="card-sm">
-					<label htmlFor="x-position">X Position</label>                    
+					<label htmlFor="x-position">X Position</label>
                     <input type="number" id='x-position' value={boxParams.x} className='form-control form-control-sm' onChange={e=>{setBoxParams({...boxParams,x:parseInt(e.target.value)})}} />
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="y-position">Y Position</label>                    
+					<label htmlFor="y-position">Y Position</label>
                     <input type="number" id='y-position' value={boxParams.y} onChange={e=>{setBoxParams({...boxParams,y:parseInt(e.target.value)})}} className='form-control form-control-sm'/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="y-position">Z Position</label>	
+					<label htmlFor="y-position">Z Position</label>
                     <input type="number" id='z-position' value={boxParams.z} className='form-control form-control-sm' onChange={e=>{setBoxParams({...boxParams,z:parseInt(e.target.value)})}} />
                     </div>
                 </div>
-                <button type='button' className='btn btn-sm btn-dark col-sm-2 mx-auto' onClick={createBox}>CREATE BOX</button>
+                <button type='button' className='btn btn-sm btn-dark col-sm-2' onClick={createBox}>CREATE BOX</button>
             </>
                 
             }
@@ -243,22 +243,22 @@ const NavBar = props=>{
                     <div className='form-inline' style={{width:'100%'}}>
                     
                     <div className='card-sm'>
-					<label htmlFor="radius">Radius</label>                    
-                    <input type="number" id='radius' value={sphereParams.radius} className='form-control form-control-sm' onChange={e=>{setSphereParams({...sphereParams,radius:parseFloat(e.target.value)})}}/>
+					<label htmlFor="radius">Radius</label>
+                    <input type="number" id='radius' min={parseFloat(1)} value={sphereParams.radius} className='form-control form-control-sm' onChange={e=>{setSphereParams({...sphereParams,radius:parseFloat(e.target.value)})}}/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="x-position">X Position</label>                    
+					<label htmlFor="x-position">X Position</label>
                     <input type="number" id='x-position' value={sphereParams.x} className='form-control form-control-sm' onChange={e=>{setSphereParams({...sphereParams,x:parseInt(e.target.value)})}} />
 					</div>
 
                     <div className='card-sm'>
-					<label htmlFor="y-position">Y Position</label>                    
+					<label htmlFor="y-position">Y Position</label>
                     <input type="number" id='y-position' value={sphereParams.y} onChange={e=>{setSphereParams({...sphereParams,y:parseInt(e.target.value)})}} className='form-control form-control-sm'/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="z-position">Z Position</label>                    
+					<label htmlFor="z-position">Z Position</label>
                     <input type="number" id='z-position' value={sphereParams.z} className='form-control form-control-sm' onChange={e=>{setSphereParams({...sphereParams,z:parseInt(e.target.value)})}} />
                     </div>
 
@@ -272,37 +272,37 @@ const NavBar = props=>{
                     <div className='form-inline' style={{width:'100%'}}>
                     
                     <div className='card-sm'>
-					<label htmlFor="top radius">Top Radius</label>                    
-                    <input type="number" id='top radius' value={cylinderParams.topRadius} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,topRadius:parseFloat(e.target.value)})}}/>
+					<label htmlFor="top radius">Top Radius</label>
+                    <input type="number" id='top radius' value={cylinderParams.topRadius} min={parseFloat(1)} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,topRadius:parseFloat(e.target.value)})}}/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="bottom radius">Bottom Radius</label>                    
-                    <input type="number" id='bottom radius' value={cylinderParams.bottomRadius} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,bottomRadius:parseFloat(e.target.value)})}}/>
+					<label htmlFor="bottom radius">Bottom Radius</label>
+                    <input type="number" id='bottom radius' min={parseFloat(1)} value={cylinderParams.bottomRadius} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,bottomRadius:parseFloat(e.target.value)})}}/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="height">Height</label>                    
-                    <input type="number" id='height' value={cylinderParams.height} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,height:parseInt(e.target.value)})}}/>
+					<label htmlFor="height">Height</label>
+                    <input type="number" id='height' min={parseFloat(1)} value={cylinderParams.height} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,height:parseInt(e.target.value)})}}/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="radialSegments">Radial Segments</label>                    
-                    <input type="number" id='radialSegments' value={cylinderParams.radialSegments} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,radialSegments:parseInt(e.target.value)})}}/>
+					<label htmlFor="radialSegments">Radial Segments</label>
+                    <input type="number" id='radialSegments' min={parseInt(4)} value={cylinderParams.radialSegments} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,radialSegments:parseInt(e.target.value)})}}/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="x-position">X Position</label>                    
+					<label htmlFor="x-position">X Position</label>
                     <input type="number" id='x-position' value={cylinderParams.x} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,x:parseInt(e.target.value)})}} />
 					</div>
 
                     <div className='card-sm'>
-					<label htmlFor="y-position">Y Position</label>                    
+					<label htmlFor="y-position">Y Position</label>
                     <input type="number" id='y-position' value={cylinderParams.y} onChange={e=>{setCylinderParams({...cylinderParams,y:parseInt(e.target.value)})}} className='form-control form-control-sm'/>
                     </div>
 
                     <div className='card-sm'>
-					<label htmlFor="z-position">Z Position</label>                    
+					<label htmlFor="z-position">Z Position</label>
                     <input type="number" id='z-position' value={cylinderParams.z} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,z:parseInt(e.target.value)})}} />
                     </div>
 
