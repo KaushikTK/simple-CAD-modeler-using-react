@@ -16,6 +16,7 @@ const CameraControls = () => {
 export default function App() {
   const [boxes,setBoxes] = useState([])
   const [spheres, setSpheres] = useState([])
+  const [cylinders, setCylinders] = useState([])
 
   const [canvasSize, _] = useState({
     width:parseInt(window.screen.width)-50,
@@ -24,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      <NavBar boxesFunction={setBoxes} boxes={boxes} spheresFunction={setSpheres} spheres={spheres} />
+      <NavBar boxesFunction={setBoxes} boxes={boxes} spheresFunction={setSpheres} spheres={spheres} cylinders={cylinders} cylindersFunction={setCylinders} />
       <Canvas className='vh-100' style={canvasSize} >
         <CameraControls />
         <ambientLight intensity={0.75} />
@@ -32,6 +33,7 @@ export default function App() {
         <pointLight position={[100, 100, 100]} />
         {boxes.map((box)=>box)}
         {spheres.map((sphere)=>sphere)}
+        {cylinders.map(cylinder=>cylinder)}
       </Canvas>
     </>
   )

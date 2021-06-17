@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Box from './geometries/Box'
+import Cylinder from './geometries/Cylinder';
 import Sphere from './geometries/Sphere'
 
 var objectNumber = 1;
@@ -8,8 +9,19 @@ const NavBar = props=>{
 
     const [boxClicked,setBoxClicked] = useState(false)
     const [sphereClicked,setSphereClicked] = useState(false)
+    const [cylinderClicked,setCylinderClicked] = useState(false)
     const [selectedObject, setSelectedObject] = useState(null)
     const c = -1;
+
+    const makeAllClickedFalse = ()=>{
+        return new Promise((res, rej)=>{
+            setBoxClicked(false);
+            setSphereClicked(false);
+            setCylinderClicked(false);
+            setSelectedObject(null);
+            res(true);
+        })
+    }
 
     // default box params
     const [boxParams,setBoxParams] = useState({
@@ -24,6 +36,17 @@ const NavBar = props=>{
     // default sphere params
     const [sphereParams,setSphereParams] = useState({
         radius:1,
+        x:1,
+        y:1,
+        z:1
+    })
+
+    // default cylinder params
+    const [cylinderParams, setCylinderParams] = useState({
+        topRadius: 1,
+        bottomRadius: 1,
+        height: 1,
+        radialSegments: 32,
         x:1,
         y:1,
         z:1
@@ -50,10 +73,13 @@ const NavBar = props=>{
         }
 
         objectNumber += 1;
-        setBoxClicked(false);
-        setSphereClicked(false);
-        setSelectedObject(null)
-        setBoxParams({length:1,breadth:1,height:1,x:1,y:1,z:1})
+        makeAllClickedFalse().then(res=>{
+            setBoxParams({length:1,breadth:1,height:1,x:1,y:1,z:1})
+        })
+        //setBoxClicked(false);
+        //setSphereClicked(false);
+        //setSelectedObject(null)
+        //setBoxParams({length:1,breadth:1,height:1,x:1,y:1,z:1})
     }
 
     const createSphere = ()=>{
@@ -76,10 +102,41 @@ const NavBar = props=>{
         }
 
         objectNumber += 1
-        setBoxClicked(false);
-        setSphereClicked(false);
-        setSelectedObject(null);
-        setSphereParams({radius:1,x:1,y:1,z:1});
+
+        makeAllClickedFalse().then((res)=>{
+            setSphereParams({radius:1,x:1,y:1,z:1});
+        })
+        //setBoxClicked(false);
+        //setSphereClicked(false);
+        //setSelectedObject(null);
+        //setSphereParams({radius:1,x:1,y:1,z:1});
+    }
+
+    const createCylinder = ()=>{
+        const cylinders = props.cylinders;
+        const cylindersFunction = props.cylindersFunction;
+        let cylinder;
+
+        if(selectedObject){
+            var tempCylinders = []
+
+            for(let i=0;i<cylinders.length;i++){
+                if(parseInt(cylinders[i].key) == parseInt(selectedObject.current.userData)) continue;
+                else tempCylinders.push(cylinders[i]);
+            }
+            cylinder = <Cylinder key={objectNumber} args={cylinderParams} setSelectedObject={setSelectedObject} k={objectNumber}/>
+            cylindersFunction([...tempCylinders, cylinder])
+        }else{
+            cylinder = <Cylinder key={objectNumber} args={cylinderParams} setSelectedObject={setSelectedObject} k={objectNumber}/>
+            cylindersFunction([...cylinders,cylinder]);
+        }
+
+        objectNumber += 1
+
+        makeAllClickedFalse().then((res)=>{
+            setCylinderParams({topRadius:1,bottomRadius:1,height:1,radialSegments:32})
+        })
+
     }
 
     useEffect(()=>{
@@ -90,8 +147,10 @@ const NavBar = props=>{
         
         if(geometryType === 'SphereGeometry'){
             let radius = selectedObject.current.geometry.parameters.radius
+
             setSphereClicked(true);
             setBoxClicked(false);
+            setCylinderClicked(false);
             setSphereParams({radius:parseFloat(radius), x:parseInt(position.x), y:parseInt(position.y), z:parseInt(position.z*c)})
         }
         
@@ -99,25 +158,45 @@ const NavBar = props=>{
             let height = selectedObject.current.geometry.parameters.depth
             let breadth = selectedObject.current.geometry.parameters.height
             let length = selectedObject.current.geometry.parameters.width
+
             setBoxClicked(true);
             setSphereClicked(false);
+            setCylinderClicked(false);
             setBoxParams({length:parseFloat(length), breadth:parseFloat(breadth), height:parseFloat(height), x:parseInt(position.x), y:parseInt(position.y), z:parseInt(position.z*c)})
         }
-      },[selectedObject])
+
+        else if(geometryType === 'CylinderGeometry'){
+            let topRadius = selectedObject.current.geometry.parameters.radiusTop
+            let bottomRadius = selectedObject.current.geometry.parameters.radiusBottom
+            let height = selectedObject.current.geometry.parameters.height
+            let radialSegments = selectedObject.current.geometry.parameters.radialSegments
+
+            setBoxClicked(false)
+            setSphereClicked(false)
+            setCylinderClicked(true)
+            setCylinderParams({topRadius:parseFloat(topRadius),bottomRadius:parseFloat(bottomRadius),height:parseInt(height),radialSegments:parseInt(radialSegments),x:parseInt(position.x), y:parseInt(position.y), z:parseInt(position.z*c)})
+        }
+
+      },[selectedObject, c])
     
 
     return(
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <p className='display-4 pr-4 my-auto' style={{fontSize:'1.75rem'}}>KAUSHIK'S CAD</p>
+            <nav className="navbar navbar-expand-lg navbar-light bg-light shadow">
+            <p className='display-4 pr-4 my-auto' style={{fontSize:'1.5rem'}}>KAUSHIK'S CAD</p>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
             
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div className="navbar-nav">
-                <button className="btn-sm btn-dark mr-1 mb-1" onClick={e=>{setBoxClicked(!boxClicked); if(sphereClicked) setSphereClicked(false); setSelectedObject(null);}}>Box</button>
-                <button className="btn-sm btn-dark mr-1 mb-1 mr-3" onClick={e=>{ setSphereClicked(!sphereClicked); if(boxClicked) setBoxClicked(false); setSelectedObject(null); }}>Sphere</button>
+                
+                <button className="btn-sm btn-dark mr-1 mb-1" onClick={e=>{setBoxClicked(!boxClicked); if(sphereClicked) setSphereClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null);}}>Box</button>
+                
+                <button className="btn-sm btn-dark mr-1 mb-1" onClick={e=>{ setSphereClicked(!sphereClicked); if(boxClicked) setBoxClicked(false); if(cylinderClicked) setCylinderClicked(false); setSelectedObject(null); }}>Sphere</button>
+
+                <button className="btn-sm btn-dark mr-1 mb-1 mr-3" onClick={e=>{ setCylinderClicked(!cylinderClicked); if(boxClicked) setBoxClicked(false); if(sphereClicked) setSphereClicked(false); setSelectedObject(null); }}>Cylinder</button>
+
                 </div>
 
             {boxClicked &&
@@ -159,7 +238,6 @@ const NavBar = props=>{
                 
             }
 
-
             {sphereClicked &&
             <>
                     <div className='form-inline' style={{width:'100%'}}>
@@ -186,6 +264,50 @@ const NavBar = props=>{
 
                     </div>
                     <button type='button' className='btn btn-sm btn-dark mt-1 mb-1 col-sm-2 mx-auto' onClick={createSphere}>CREATE SPHERE</button>
+            </>
+            }
+
+            {cylinderClicked &&
+            <>
+                    <div className='form-inline' style={{width:'100%'}}>
+                    
+                    <div className='card-sm'>
+					<label htmlFor="top radius">Top Radius</label>                    
+                    <input type="number" id='top radius' value={cylinderParams.topRadius} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,topRadius:parseFloat(e.target.value)})}}/>
+                    </div>
+
+                    <div className='card-sm'>
+					<label htmlFor="bottom radius">Bottom Radius</label>                    
+                    <input type="number" id='bottom radius' value={cylinderParams.bottomRadius} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,bottomRadius:parseFloat(e.target.value)})}}/>
+                    </div>
+
+                    <div className='card-sm'>
+					<label htmlFor="height">Height</label>                    
+                    <input type="number" id='height' value={cylinderParams.height} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,height:parseInt(e.target.value)})}}/>
+                    </div>
+
+                    <div className='card-sm'>
+					<label htmlFor="radialSegments">Radial Segments</label>                    
+                    <input type="number" id='radialSegments' value={cylinderParams.radialSegments} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,radialSegments:parseInt(e.target.value)})}}/>
+                    </div>
+
+                    <div className='card-sm'>
+					<label htmlFor="x-position">X Position</label>                    
+                    <input type="number" id='x-position' value={cylinderParams.x} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,x:parseInt(e.target.value)})}} />
+					</div>
+
+                    <div className='card-sm'>
+					<label htmlFor="y-position">Y Position</label>                    
+                    <input type="number" id='y-position' value={cylinderParams.y} onChange={e=>{setCylinderParams({...cylinderParams,y:parseInt(e.target.value)})}} className='form-control form-control-sm'/>
+                    </div>
+
+                    <div className='card-sm'>
+					<label htmlFor="z-position">Z Position</label>                    
+                    <input type="number" id='z-position' value={cylinderParams.z} className='form-control form-control-sm' onChange={e=>{setCylinderParams({...cylinderParams,z:parseInt(e.target.value)})}} />
+                    </div>
+
+                    </div>
+                    <button type='button' className='btn btn-sm btn-dark mt-1 mb-1 col-sm-2 mx-auto' onClick={createCylinder}>CREATE CYLINDER</button>
             </>
             }
 
